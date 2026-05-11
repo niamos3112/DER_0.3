@@ -1,0 +1,937 @@
+/* =========================================
+   1. FUENTES Y RESETEO BÁSICO
+   ========================================= */
+
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@500;700;800&display=swap');
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Montserrat', sans-serif;
+}
+
+body {
+    background-color: #eef2f5;
+    padding: 40px 20px;
+    color: #333;
+}
+
+
+/* =========================================
+   2. ESTRUCTURA PRINCIPAL (CONTENEDOR)
+   ========================================= */
+
+.container {
+    background-color: #ffffff;
+    width: 100%;
+    max-width: 1050px;
+    margin: 0 auto;
+    border-radius: 15px;
+    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
+    padding: 30px 50px 50px;
+    position: relative;
+}
+
+.top-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-bottom: 20px;
+    border-bottom: 2px solid #f4f4f4;
+    margin-bottom: 30px;
+}
+
+.top-header img {
+    max-height: 45px;
+    filter: grayscale(20%);
+    transition: all 0.3s ease;
+}
+
+.top-header img:hover {
+    transform: scale(1.05);
+    filter: grayscale(0%);
+}
+
+.hub-title {
+    font-size: 1.3rem;
+    font-weight: 800;
+    color: #111;
+    letter-spacing: 0.5px;
+    cursor: pointer;
+    user-select: none;
+    text-align: center;
+}
+
+.badge-wrapper {
+    margin-bottom: 30px;
+}
+
+.black-badge {
+    background-color: #000;
+    color: #fff;
+    padding: 8px 18px;
+    border-radius: 8px;
+    font-weight: 800;
+    font-style: italic;
+    font-size: 1.1rem;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+}
+
+
+/* =========================================
+   3. GRILLA PRINCIPAL (DASHBOARD)
+   ========================================= */
+
+.dashboard-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1.2fr;
+    gap: 30px;
+    min-height: 400px;
+}
+
+
+/* Tarjetas Rojas y Azules (Directorio) */
+
+.info-card {
+    border-radius: 15px;
+    padding: 30px 20px;
+    text-decoration: none;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    position: relative;
+    cursor: pointer;
+    transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+}
+
+.card-red {
+    background-color: #e31837;
+}
+
+
+/* Rojo Cusco/Perú */
+
+.card-teal {
+    background-color: #2b9eb3;
+}
+
+.info-card:hover {
+    transform: translateY(-10px);
+    box-shadow: 0 15px 30px rgba(0, 0, 0, 0.2);
+}
+
+.card-title {
+    color: #fff;
+    text-decoration: underline;
+    text-decoration-thickness: 2px;
+    text-underline-offset: 4px;
+    font-weight: 800;
+    font-size: 1.4rem;
+    margin-bottom: 40px;
+    letter-spacing: 1px;
+}
+
+.white-box {
+    background-color: #fff;
+    width: 90%;
+    padding: 20px 10px;
+    text-align: center;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.15);
+    transition: transform 0.3s ease;
+}
+
+.info-card:hover .white-box {
+    transform: scale(1.05);
+}
+
+.box-text {
+    color: #000;
+    font-weight: 800;
+    font-size: 1.1rem;
+    line-height: 1.3;
+    text-decoration: underline;
+}
+
+.plus-icon {
+    position: absolute;
+    bottom: 25px;
+    color: #fff;
+    font-size: 1.8rem;
+    transition: transform 0.5s ease;
+}
+
+.info-card:hover .plus-icon {
+    transform: rotate(180deg) scale(1.2);
+}
+
+
+/* Columna Derecha (Anexos, Calendario, Postular) */
+
+.right-column {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    justify-content: space-between;
+}
+
+.img-card {
+    position: relative;
+    border-radius: 15px;
+    height: 140px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    overflow: hidden;
+    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.15);
+    border: 2px solid #333;
+    background-size: cover;
+    background-position: center;
+    transition: all 0.3s ease;
+}
+
+.img-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(255, 255, 255, 0.2);
+    transition: background 0.3s ease;
+}
+
+.img-card:hover {
+    transform: scale(1.03);
+}
+
+.img-card:hover::before {
+    background: rgba(255, 255, 255, 0);
+}
+
+
+/* Imágenes por defecto (Reemplazar con las tuyas si lo deseas) */
+
+.bases-bg {
+    background-image: url('https://images.unsplash.com/photo-1568667256549-094345857637?w=400');
+}
+
+.calendar-bg {
+    background-image: url('https://images.unsplash.com/photo-1506784951206-396218ca2216?w=400');
+}
+
+.red-overlay {
+    position: relative;
+    background-color: #e31837;
+    color: #fff;
+    padding: 10px 20px;
+    text-align: center;
+    font-weight: 800;
+    font-size: 1.2rem;
+    line-height: 1.2;
+    text-decoration: underline;
+    z-index: 2;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+}
+
+.small-plus {
+    position: absolute;
+    bottom: 10px;
+    color: #e31837;
+    background: #fff;
+    border-radius: 50%;
+    font-size: 1.2rem;
+    z-index: 2;
+    transition: transform 0.4s ease;
+}
+
+.img-card:hover .small-plus {
+    transform: rotate(90deg) scale(1.2);
+}
+
+.postula-btn {
+    background-color: #000;
+    color: #fff;
+    text-decoration: none;
+    padding: 15px;
+    border-radius: 5px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 1.4rem;
+    transition: all 0.3s ease;
+}
+
+.postula-btn strong {
+    font-weight: 800;
+    margin-left: 5px;
+    text-decoration: underline;
+}
+
+.click-icon {
+    margin-left: 10px;
+    font-size: 1.2rem;
+    transition: transform 0.3s ease;
+}
+
+.postula-btn:hover {
+    background-color: #333;
+    transform: translateY(-3px);
+}
+
+.postula-btn:hover .click-icon {
+    transform: translateY(-5px) scale(1.1);
+}
+
+
+/* =========================================
+   4. MODALES (VENTANAS EMERGENTES)
+   ========================================= */
+
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.7);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+    backdrop-filter: blur(3px);
+}
+
+.hidden {
+    display: none !important;
+}
+
+.modal-content {
+    background: #fff;
+    padding: 30px;
+    border-radius: 10px;
+    width: 90%;
+    max-width: 600px;
+    position: relative;
+    max-height: 90vh;
+    overflow-y: auto;
+    box-shadow: 0 25px 50px rgba(0, 0, 0, 0.3);
+    animation: fadeIn 0.3s ease;
+}
+
+.modal-content.large {
+    max-width: 950px;
+}
+
+.close-btn {
+    position: absolute;
+    top: 15px;
+    right: 20px;
+    font-size: 2rem;
+    cursor: pointer;
+    color: #e31837;
+    font-weight: bold;
+    line-height: 1;
+    transition: transform 0.2s;
+}
+
+.close-btn:hover {
+    transform: scale(1.2);
+}
+
+
+/* =========================================
+   5. PANEL DE ADMINISTRADOR
+   ========================================= */
+
+.admin-panel {
+    background: #fff;
+    border: 3px solid #e31837;
+    padding: 25px;
+    margin-bottom: 30px;
+    border-radius: 10px;
+    box-shadow: 0 10px 30px rgba(227, 24, 55, 0.15);
+}
+
+.admin-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 25px;
+    border-bottom: 2px solid #eee;
+    padding-bottom: 15px;
+}
+
+.admin-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 20px;
+}
+
+.admin-card {
+    background: #f8f9fa;
+    padding: 20px;
+    border-radius: 8px;
+    border: 1px solid #ddd;
+}
+
+.admin-card h4 {
+    margin-bottom: 15px;
+    color: #111;
+}
+
+.admin-input,
+.admin-card input,
+.admin-card select {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 12px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    font-size: 0.95rem;
+}
+
+.admin-sub-section {
+    background: #fff;
+    padding: 15px;
+    border: 1px solid #eee;
+    border-radius: 5px;
+}
+
+.admin-sub-section h5 {
+    margin-bottom: 10px;
+    color: #555;
+}
+
+
+/* Botones Generales */
+
+button {
+    padding: 12px 15px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-weight: bold;
+    font-size: 1rem;
+    width: 100%;
+    margin-bottom: 8px;
+    transition: background 0.3s, transform 0.1s;
+}
+
+button:active {
+    transform: scale(0.98);
+}
+
+.btn-primary {
+    background: #111;
+    color: #fff;
+}
+
+.btn-primary:hover {
+    background: #333;
+}
+
+.btn-secondary {
+    background: #2b9eb3;
+    color: #fff;
+}
+
+.btn-secondary:hover {
+    background: #1e7384;
+}
+
+.btn-danger {
+    background: #e31837;
+    color: #fff;
+    width: auto;
+    padding: 10px 20px;
+}
+
+.btn-danger:hover {
+    background: #b01028;
+}
+
+
+/* =========================================
+   6. DIRECTORIO: TABLAS Y ENTIDADES
+   ========================================= */
+
+.entidad-group {
+    background: #f9f9f9;
+    border: 2px solid #333;
+    border-radius: 8px;
+    margin-bottom: 25px;
+    overflow: hidden;
+}
+
+.entidad-header {
+    background: #333;
+    color: #fff;
+    padding: 12px 15px;
+    font-weight: 800;
+    font-size: 1.1rem;
+}
+
+.table-responsive {
+    overflow-x: auto;
+    width: 100%;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    background: #fff;
+}
+
+th,
+td {
+    border: 1px solid #ddd;
+    padding: 12px 15px;
+    text-align: left;
+    font-size: 0.95rem;
+}
+
+th {
+    background-color: #f4f4f4;
+    color: #111;
+    font-weight: 800;
+}
+
+
+/* =========================================
+   7. CALENDARIO
+   ========================================= */
+
+.calendar-header-nav {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+    padding: 10px;
+    background: #f4f4f4;
+    border-radius: 8px;
+}
+
+.btn-nav {
+    background: #e31837;
+    color: white;
+    width: 45px;
+    height: 45px;
+    border-radius: 5px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 0;
+}
+
+.calendar-grid {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 8px;
+}
+
+.calendar-day {
+    background: #fff;
+    padding: 15px 5px;
+    text-align: center;
+    border-radius: 5px;
+    font-weight: bold;
+    border: 1px solid #ddd;
+    transition: background 0.3s;
+}
+
+.calendar-day.has-event {
+    background-color: #111;
+    color: #fff;
+    cursor: pointer;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.calendar-day.has-event:hover {
+    background-color: #e31837;
+    transform: translateY(-2px);
+}
+
+.evento-detalles {
+    margin-top: 25px;
+    padding: 20px;
+    background: #fff;
+    border-left: 5px solid #e31837;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    border-radius: 5px;
+    animation: fadeIn 0.4s ease;
+}
+
+.evento-hora {
+    font-weight: bold;
+    color: #e31837;
+    margin-bottom: 5px;
+}
+
+.evento-titulo {
+    font-size: 1.3rem;
+    font-weight: 800;
+    margin-bottom: 10px;
+    color: #111;
+}
+
+.btn-meet-link {
+    display: inline-block;
+    background: #e31837;
+    color: #fff;
+    padding: 10px 20px;
+    text-decoration: none;
+    border-radius: 5px;
+    font-weight: bold;
+    margin-top: 15px;
+    font-size: 1rem;
+    transition: background 0.3s;
+}
+
+.btn-meet-link:hover {
+    background: #b01028;
+}
+
+.admin-event-actions {
+    margin-top: 20px;
+    padding-top: 15px;
+    border-top: 1px dashed #ccc;
+    display: flex;
+    gap: 10px;
+}
+
+
+/* =========================================
+   8. LISTAS DE ANEXOS Y UTILIDADES
+   ========================================= */
+
+.admin-list,
+.public-list {
+    list-style: none;
+}
+
+.admin-list li,
+.public-list li {
+    padding: 12px;
+    background: #fff;
+    margin-bottom: 8px;
+    border-radius: 5px;
+    border: 1px solid #ddd;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.public-list a {
+    color: #e31837;
+    font-weight: bold;
+    text-decoration: none;
+    font-size: 1.1rem;
+    display: block;
+    width: 100%;
+}
+
+.public-list a:hover {
+    text-decoration: underline;
+    color: #b01028;
+}
+
+.loading-banner {
+    background: #2b9eb3;
+    color: white;
+    text-align: center;
+    padding: 12px;
+    font-weight: bold;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    z-index: 2000;
+    transition: opacity 0.5s;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(15px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+
+/* =========================================
+   9. DISEÑO RESPONSIVO (MÓVILES Y TABLETS)
+   ========================================= */
+
+@media (max-width: 900px) {
+    .dashboard-grid {
+        grid-template-columns: 1fr;
+    }
+    .right-column {
+        height: auto;
+    }
+    .img-card {
+        height: 160px;
+    }
+    .top-header {
+        flex-direction: column;
+        gap: 15px;
+    }
+}
+
+@media (max-width: 768px) {
+    body {
+        padding: 20px 10px;
+    }
+    .container {
+        padding: 20px;
+    }
+    /* Responsive puro para tablas de datos */
+    .table-responsive table {
+        display: block;
+        width: 100%;
+    }
+    .table-responsive thead {
+        display: none;
+    }
+    .table-responsive tbody tr {
+        display: block;
+        margin-bottom: 15px;
+        border: 2px solid #eee;
+    }
+    .table-responsive th,
+    .table-responsive td {
+        display: block;
+        width: 100%;
+        text-align: right;
+        padding-left: 50%;
+        position: relative;
+        border: none;
+        border-bottom: 1px solid #eee;
+    }
+    .table-responsive td::before {
+        content: attr(data-label);
+        position: absolute;
+        left: 15px;
+        width: 45%;
+        text-align: left;
+        font-weight: 800;
+        color: #555;
+    }
+    .admin-event-actions {
+        flex-direction: column;
+    }
+    .admin-event-actions button {
+        width: 100% !important;
+    }
+}
+
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@500;700;800&display=swap');
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Montserrat', sans-serif;
+}
+
+body {
+    background-color: #eef2f5;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    perspective: 1000px; /* Necesario para el efecto 3D del JS */
+}
+
+/* Tarjeta Principal */
+.container {
+    background-color: #ffffff;
+    width: 90%;
+    max-width: 950px;
+    border-radius: 15px;
+    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
+    padding: 30px 50px 70px;
+    position: relative;
+    transform-style: preserve-3d;
+    transition: transform 0.1s;
+}
+
+/* Sistema de Animaciones de Entrada */
+.fade-in {
+    opacity: 0;
+    transform: translateY(30px);
+    animation: fadeInUp 0.8s cubic-bezier(0.25, 1, 0.5, 1) forwards;
+}
+
+.delay-1 { animation-delay: 0.15s; }
+.delay-2 { animation-delay: 0.3s; }
+.delay-3 { animation-delay: 0.45s; }
+.delay-4 { animation-delay: 0.6s; }
+
+@keyframes fadeInUp {
+    to { opacity: 1; transform: translateY(0); }
+}
+
+/* Headers y Logos */
+.top-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-bottom: 20px;
+    border-bottom: 2px solid #f4f4f4;
+    margin-bottom: 25px;
+}
+
+.hub-title {
+    font-size: 1.1rem;
+    font-weight: 800;
+    color: #111;
+    letter-spacing: 0.5px;
+}
+
+.logo-link img {
+    max-height: 45px;
+    transition: all 0.3s ease;
+    filter: grayscale(20%);
+}
+
+.logo-link:hover img {
+    transform: scale(1.08) translateY(-3px);
+    filter: grayscale(0%);
+}
+
+.sub-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 60px;
+}
+
+.left-logos {
+    display: flex;
+    gap: 15px;
+}
+
+.der-title {
+    font-size: 1.2rem;
+    font-weight: 800;
+    color: #111;
+}
+
+/* Textos Centrales */
+.main-content {
+    text-align: center;
+}
+
+.main-title {
+    font-size: 2.2rem;
+    font-weight: 800;
+    color: #000;
+    line-height: 1.3;
+    margin-bottom: 30px;
+}
+
+.highlight-red {
+    color: #e31837; /* Rojo Perú/Cusco */
+}
+
+.subtitle {
+    font-size: 1.2rem;
+    font-weight: 800;
+    margin-bottom: 40px;
+    color: #000;
+}
+
+/* Diseño de Botones Animados */
+.button-container {
+    display: flex;
+    justify-content: center;
+    gap: 30px;
+    flex-wrap: wrap;
+}
+
+.action-btn {
+    display: flex;
+    align-items: center;
+    text-decoration: none;
+    padding: 8px 30px 8px 8px;
+    border-radius: 50px;
+    color: white;
+    font-weight: 700;
+    font-size: 1.1rem;
+    transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); /* Efecto rebote */
+    position: relative;
+    box-shadow: 0 6px 15px rgba(0,0,0,0.15);
+    min-width: 320px;
+}
+
+.action-btn:hover {
+    transform: translateY(-8px) scale(1.02);
+    box-shadow: 0 15px 25px rgba(0,0,0,0.25);
+}
+
+.red-btn { background-color: #e31837; }
+.black-btn { background-color: #111111; }
+
+.icon-wrapper {
+    background-color: white;
+    width: 55px;
+    height: 55px;
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 1.5rem;
+    margin-right: 20px;
+    box-shadow: inset 0 2px 5px rgba(0,0,0,0.1);
+    transition: transform 0.5s ease;
+}
+
+.red-btn .icon-wrapper { color: #e31837; }
+.black-btn .icon-wrapper { color: #111111; }
+
+/* Animaciones específicas de íconos al hacer hover */
+.action-btn:hover .icon-wrapper {
+    transform: rotate(360deg);
+}
+
+.red-btn:hover .fa-lightbulb {
+    animation: glow 0.8s infinite alternate;
+}
+
+.black-btn:hover .fa-rocket {
+    animation: blast 0.5s ease forwards;
+}
+
+@keyframes glow {
+    from { color: #e31837; text-shadow: none; }
+    to { color: #f1c40f; text-shadow: 0 0 10px rgba(241, 196, 15, 0.8); }
+}
+
+@keyframes blast {
+    0% { transform: translateY(0); }
+    50% { transform: translateY(-5px) scale(1.1); }
+    100% { transform: translateY(-3px); }
+}
+
+/* Responsividad para móviles */
+@media (max-width: 768px) {
+    .top-header, .sub-header {
+        flex-direction: column;
+        gap: 20px;
+    }
+    .button-container {
+        flex-direction: column;
+        align-items: center;
+    }
+    .container {
+        padding: 20px 20px 40px;
+    }
+}

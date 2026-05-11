@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hub de Innovación Cusco</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdn.sheetjs.com/xlsx-latest/package/dist/xlsx.full.min.js"></script>
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+
+<body>
+    <div id="loading-banner" class="loading-banner">Conectando al servidor...</div>
+
+    <div id="admin-login" class="modal-overlay hidden">
+        <div class="modal-content admin-box">
+            <span class="close-btn" onclick="cerrarModal('admin-login')">&times;</span>
+            <h3>Acceso Administrativo</h3>
+            <input type="password" id="admin-pass" placeholder="Ingrese contraseña">
+            <button onclick="verificarAcceso()" class="btn-primary">Entrar</button>
+        </div>
+    </div>
+
+    <div id="admin-panel" class="admin-panel hidden">
+        <div class="admin-header">
+            <h3>Panel de Control Administrador</h3>
+            <button onclick="cerrarAdmin()" class="btn-danger">Cerrar Sesión</button>
+        </div>
+
+        <div class="admin-grid">
+            <div class="admin-card">
+                <h4><i class="fa-solid fa-link"></i> Enlace de Postulación</h4>
+                <input type="url" id="admin-link-postula" placeholder="https://...">
+                <button onclick="actualizarLinkPostulacion()" class="btn-primary">Actualizar Enlace</button>
+            </div>
+
+            <div class="admin-card" style="grid-column: span 2;">
+                <h4><i class="fa-solid fa-users"></i> Gestión de Directorios</h4>
+                <select id="dir-tipo" class="admin-input">
+                    <option value="incubadora">Incubadoras y Otras Entidades</option>
+                    <option value="formulador">Formuladores</option>
+                </select>
+
+                <div class="admin-sub-section">
+                    <input type="text" id="dir-entidad" placeholder="Entidad" class="admin-input">
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 5px;">
+                        <input type="text" id="dir-nombre" placeholder="Nombre">
+                        <input type="text" id="dir-cargo" placeholder="Cargo">
+                        <input type="text" id="dir-cel" placeholder="Celular">
+                        <input type="text" id="dir-correo" placeholder="Correo">
+                    </div>
+                    <input type="text" id="dir-obs" placeholder="Observaciones" class="admin-input" style="margin-top:5px;">
+                    <button onclick="agregarDirectorioManual()" class="btn-primary">Añadir Integrante</button>
+                </div>
+
+                <div class="admin-sub-section" style="margin-top: 15px;">
+                    <h5>O Carga Masiva (Excel)</h5>
+                    <button onclick="descargarPlantilla()" class="btn-secondary">Descargar Formato</button>
+                    <input type="file" id="excel-input" accept=".xlsx, .xls" onchange="manejarSubidaExcel(event)">
+                </div>
+                <ul id="lista-admin-entidades" class="admin-list" style="margin-top: 15px;"></ul>
+            </div>
+
+            <div class="admin-card">
+                <h4><i class="fa-solid fa-calendar-days"></i> Añadir / Editar Evento</h4>
+                <input type="hidden" id="evento-edit-id">
+                <input type="date" id="evento-fecha" class="admin-input">
+                <input type="time" id="evento-hora" class="admin-input">
+                <input type="text" id="evento-titulo" placeholder="Título del Evento" class="admin-input">
+                <input type="url" id="evento-ubicacion" placeholder="Lugar o URL de Meet/Zoom (Incluye https://)" class="admin-input">
+                <button onclick="guardarEvento()" class="btn-primary" id="btn-guardar-evento">Guardar Evento</button>
+                <button onclick="cancelarEdicionEvento()" class="btn-secondary hidden" id="btn-cancelar-edicion">Cancelar Edición</button>
+            </div>
+
+            <div class="admin-card">
+                <h4><i class="fa-solid fa-file-pdf"></i> Gestión de Anexos</h4>
+                <input type="text" id="anexo-nombre" placeholder="Nombre del Documento" class="admin-input">
+                <input type="url" id="anexo-url" placeholder="URL del PDF (Incluye https://)" class="admin-input">
+                <button onclick="agregarAnexo()" class="btn-primary">Añadir Anexo</button>
+                <ul id="lista-anexos-admin" class="admin-list"></ul>
+            </div>
+        </div>
+    </div>
+
+    <div class="container" id="main-card">
+        <header class="top-header">
+            <a href="https://www.gob.pe/produce" class="logo-link fade-in" target="_blank">
+                <img src="/imagenes/MP.PNG" alt="Ministerio de la Producción">
+            </a>
+            <h2 class="hub-title" ondblclick="abrirModal('admin-login')" title="Doble clic para administrar">HUB DE INNOVACIÓN CUSCO</h2>
+            <a href="https://www.proinnovate.gob.pe/" class="logo-link fade-in" target="_blank">
+                <img src="/imagenes/innova.PNG" alt="Pro Innóvate">
+            </a>
+        </header>
+
+        <div class="badge-wrapper"><span class="black-badge">Emprendimientos Innovadores</span></div>
+
+        <main class="dashboard-grid">
+            <div onclick="abrirDirectorio('incubadora')" class="info-card card-red">
+                <h3 class="card-title">DIRECTORIO</h3>
+                <div class="white-box"><span class="box-text">INCUBADORAS Y<br>OTRAS ENTIDADES</span></div>
+                <i class="fa-solid fa-circle-plus plus-icon"></i>
+            </div>
+
+            <div onclick="abrirDirectorio('formulador')" class="info-card card-teal">
+                <h3 class="card-title">DIRECTORIO</h3>
+                <div class="white-box"><span class="box-text">FORMULADORES</span></div>
+                <i class="fa-solid fa-circle-plus plus-icon"></i>
+            </div>
+
+            <div class="right-column">
+                <div onclick="abrirModal('modal-anexos')" class="img-card bases-bg">
+                    <div class="red-overlay">BASES Y<br>ANEXOS</div>
+                </div>
+                <div onclick="abrirModal('modal-calendario')" class="img-card calendar-bg">
+                    <div class="red-overlay">CALENDARIO<br>de eventos</div>
+                </div>
+                <a href="#" id="btn-postula-publico" target="_blank" rel="noopener noreferrer" class="postula-btn">Postula <strong>aquí</strong> <i class="fa-solid fa-hand-pointer click-icon"></i></a>
+            </div>
+        </main>
+    </div>
+
+    <div id="modal-directorio" class="modal-overlay hidden">
+        <div class="modal-content large">
+            <span class="close-btn" onclick="cerrarModal('modal-directorio')">&times;</span>
+            <h2 id="titulo-directorio">Directorio</h2>
+            <div id="contenedor-entidades"></div>
+        </div>
+    </div>
+
+    <div id="modal-calendario" class="modal-overlay hidden">
+        <div class="modal-content">
+            <span class="close-btn" onclick="cerrarModal('modal-calendario')">&times;</span>
+            <div class="calendar-header-nav">
+                <button onclick="cambiarMes(-1)" class="btn-nav"><i class="fa-solid fa-chevron-left"></i></button>
+                <h2 id="mes-anio-display">Mes Año</h2>
+                <button onclick="cambiarMes(1)" class="btn-nav"><i class="fa-solid fa-chevron-right"></i></button>
+            </div>
+            <div class="calendar-grid" id="calendar-body"></div>
+            <div id="evento-detalles-box" class="evento-detalles hidden"></div>
+        </div>
+    </div>
+
+    <div id="modal-anexos" class="modal-overlay hidden">
+        <div class="modal-content">
+            <span class="close-btn" onclick="cerrarModal('modal-anexos')">&times;</span>
+            <h2>Bases y Anexos</h2>
+            <ul id="lista-anexos-publico" class="public-list"></ul>
+        </div>
+    </div>
+
+    <script src="/static/script.js"></script>
+</body>
+
+</html>

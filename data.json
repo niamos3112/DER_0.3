@@ -1,0 +1,34 @@
+{
+    "anexos": [],
+    "directorio": [
+        {
+            "Tipo": "incubadora",
+            "Entidad": "CÁMARA DE COMERCIO DEL CUSCO",
+            "Integrante": "Jose Fernando Santoyo Vargas",
+            "Cargo": "Presidente de la CCC",
+            "Celular": "984692991",
+            "Correo": "presidencia@camaracusco.org",
+            "Observaciones": "Ingresar documentos por Mesa de Partes Virtual: https://goresedetramitedigital.regioncusco.gob.pe/tramite/virtual"
+        },
+        {
+            "Tipo": "incubadora",
+            "Entidad": "CÁMARA DE COMERCIO DEL CUSCO",
+            "Integrante": "Jacqueline Lizbeth Aguilar Dancuart",
+            "Cargo": "Gerente General de la CCC",
+            "Celular": "984987492",
+            "Correo": "gerencia@camaracusco.org",
+            "Observaciones": "-"
+        },
+        {
+            "Tipo": "incubadora",
+            "Entidad": "GOBIERNO REGIONAL DEL CUSCO",
+            "Integrante": "Werner Máximo Salcedo Alvares",
+            "Cargo": "Gobernador Regional del Cusco",
+            "Celular": "(084) 215841",
+            "Correo": "wsalcedo@regioncusco.gob.pe",
+            "Observaciones": "-"
+        }
+    ],
+    "eventos": [],
+    "linkPostulacion": "https://docs.google.com/forms/d/e/1FAIpQLSdHx5plxF2oaLkxDZlTqUJQgkEBDieo19RAVdtNrPkHveHBIQ/viewform"
+}
