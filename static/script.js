@@ -1,5 +1,5 @@
 // ==========================================
-// CONFIGURACIÓN GLOBAL (PRODUCCIÓN EN FLASK)
+// CONFIGURACIÓN GLOBAL
 // ==========================================
 const API_URL = '/api/data';
 
@@ -13,31 +13,41 @@ let appData = {
 let isAdmin = false;
 let fechaActual = new Date();
 
+// Escuchar cambios en el selector para mostrar el formulario correcto
+document.addEventListener('DOMContentLoaded', () => {
+    cargarDatosServidor();
+    
+    const dirTipo = document.getElementById('dir-tipo');
+    if(dirTipo) {
+        dirTipo.addEventListener('change', function() {
+            if(this.value === 'incubadora') {
+                document.getElementById('form-incubadora').classList.remove('hidden');
+                document.getElementById('form-formulador').classList.add('hidden');
+            } else {
+                document.getElementById('form-incubadora').classList.add('hidden');
+                document.getElementById('form-formulador').classList.remove('hidden');
+            }
+        });
+    }
+});
+
 // ==========================================
-// 1. COMUNICACIÓN CON EL SERVIDOR (PYTHON)
+// 1. COMUNICACIÓN CON EL SERVIDOR
 // ==========================================
 async function cargarDatosServidor() {
     try {
         const respuesta = await fetch(API_URL);
         if (respuesta.ok) {
             appData = await respuesta.json();
-            
-            // Ocultar banner de carga
             const banner = document.getElementById('loading-banner');
             if(banner) {
                 banner.style.opacity = '0';
                 setTimeout(() => banner.style.display = 'none', 500);
             }
-            
             renderizarTodo();
         }
     } catch (error) {
-        console.error("Error conectando al servidor Python:", error);
-        const banner = document.getElementById('loading-banner');
-        if(banner) {
-            banner.innerText = "Error de conexión. Asegúrate de que el servidor esté activo.";
-            banner.style.background = "#e31837";
-        }
+        console.error("Error conectando al servidor", error);
     }
 }
 
@@ -55,10 +65,8 @@ async function guardarDatosServidor() {
 }
 
 function renderizarTodo() {
-    // Renderizar enlace de postulación (solo si existe el botón en la página actual)
     const btnPostula = document.getElementById('btn-postula-publico');
     const inputLink = document.getElementById('admin-link-postula');
-    
     if (btnPostula) btnPostula.href = appData.linkPostulacion;
     if (inputLink) inputLink.value = appData.linkPostulacion;
     
@@ -67,16 +75,13 @@ function renderizarTodo() {
     renderizarAnexos();
 }
 
-document.addEventListener('DOMContentLoaded', cargarDatosServidor);
-
 // ==========================================
-// 2. CONTROL DE ACCESO (ADMINISTRADOR)
+// 2. CONTROL DE ACCESO
 // ==========================================
 function abrirModal(id) { 
     const modal = document.getElementById(id);
     if(modal) modal.classList.remove('hidden'); 
 }
-
 function cerrarModal(id) { 
     const modal = document.getElementById(id);
     if(modal) modal.classList.add('hidden'); 
@@ -88,7 +93,7 @@ function verificarAcceso() {
         document.getElementById('admin-panel').classList.remove('hidden');
         document.getElementById('admin-pass').value = '';
         isAdmin = true;
-        renderizarCalendario(); // Mostrar botones de edición
+        renderizarCalendario();
     } else { 
         alert("Contraseña incorrecta"); 
     }
@@ -105,45 +110,68 @@ function actualizarLinkPostulacion() {
     if (url && !url.startsWith('http')) url = 'https://' + url;
     appData.linkPostulacion = url;
     guardarDatosServidor();
-    alert("Enlace actualizado para todos los usuarios.");
+    alert("Enlace actualizado");
 }
 
 // ==========================================
-// 3. GESTIÓN DE DIRECTORIOS (CON CATEGORÍAS)
+// 3. GESTIÓN DE DIRECTORIOS (DOBLE MODELO)
 // ==========================================
 function agregarDirectorioManual() {
     const tipo = document.getElementById('dir-tipo').value;
     const categoria = document.getElementById('dir-categoria').value;
-    const entidad = document.getElementById('dir-entidad').value;
-    const nombre = document.getElementById('dir-nombre').value;
     
-    if(!entidad || !nombre) return alert("La Entidad y el Nombre son obligatorios");
+    // Asignamos un ID único a cada registro para poder borrarlo sin conflictos
+    let nuevoRegistro = { id: Date.now(), Tipo: tipo, Categoria: categoria };
 
-    appData.directorio.push({
-        Tipo: tipo, 
-        Categoria: categoria, // Guardamos la página a la que pertenece
-        Entidad: entidad.trim(), 
-        Integrante: nombre.trim(),
-        Cargo: document.getElementById('dir-cargo').value.trim(),
-        Celular: document.getElementById('dir-cel').value.trim(),
-        Correo: document.getElementById('dir-correo').value.trim(),
-        Observaciones: document.getElementById('dir-obs').value.trim()
-    });
+    if(tipo === 'incubadora') {
+        nuevoRegistro.Organizacion = document.getElementById('inc-org').value.trim();
+        nuevoRegistro.RUC = document.getElementById('inc-ruc').value.trim();
+        nuevoRegistro.Tipo_Entidad = document.getElementById('inc-tipo').value.trim();
+        nuevoRegistro.Celular = document.getElementById('inc-cel').value.trim();
+        nuevoRegistro.Correo = document.getElementById('inc-correo').value.trim();
+        nuevoRegistro.Contacto_Nombres = document.getElementById('inc-nombres').value.trim();
+        nuevoRegistro.Contacto_Cargo = document.getElementById('inc-cargo').value.trim();
+        nuevoRegistro.Servicios = document.getElementById('inc-servicios').value.trim();
+        nuevoRegistro.Sectores_Interes = document.getElementById('inc-sectores').value.trim();
+        nuevoRegistro.Link_Portafolio = document.getElementById('inc-portafolio').value.trim();
 
+        if(!nuevoRegistro.Organizacion) return alert("El nombre de la organización es obligatorio");
+    } else {
+        nuevoRegistro.Nombres = document.getElementById('form-nombres').value.trim();
+        nuevoRegistro.Apellidos = document.getElementById('form-apellidos').value.trim();
+        nuevoRegistro.Celular = document.getElementById('form-cel').value.trim();
+        nuevoRegistro.Correo = document.getElementById('form-correo').value.trim();
+        nuevoRegistro.Sectores_Priorizados = document.getElementById('form-sectores').value.trim();
+        nuevoRegistro.Fondos_Experiencia = document.getElementById('form-fondos').value.trim();
+        nuevoRegistro.Interes_Principal = document.getElementById('form-interes').value.trim();
+        nuevoRegistro.Disponibilidad = document.getElementById('form-disp').value.trim();
+        nuevoRegistro.Link_CV = document.getElementById('form-cv').value.trim();
+
+        if(!nuevoRegistro.Nombres || !nuevoRegistro.Apellidos) return alert("Nombres y Apellidos son obligatorios");
+    }
+
+    appData.directorio.push(nuevoRegistro);
     guardarDatosServidor();
     
-    // Limpiar campos de texto del panel
-    document.querySelectorAll('.admin-sub-section input[type="text"]').forEach(el => el.value = '');
-    alert(`Integrante añadido correctamente a la sección: ${categoria}`);
+    // Limpiar inputs
+    document.querySelectorAll('.admin-sub-section input').forEach(el => el.value = '');
+    alert(`Registro añadido a ${categoria}`);
 }
 
 function descargarPlantilla() {
-    // La plantilla Excel es simple. La categoría y el tipo se eligen en la página web antes de subir.
-    const encabezados = [["Entidad", "Integrante", "Cargo", "Celular", "Correo", "Observaciones"]];
+    const tipo = document.getElementById('dir-tipo').value;
+    let encabezados = [];
+    
+    if(tipo === 'incubadora') {
+        encabezados = [["Organizacion", "Celular", "Correo", "RUC", "Tipo_Entidad", "Contacto_Nombres", "Contacto_Cargo", "Servicios", "Sectores_Interes", "Link_Portafolio"]];
+    } else {
+        encabezados = [["Nombres", "Apellidos", "Celular", "Correo", "Sectores_Priorizados", "Fondos_Experiencia", "Interes_Principal", "Disponibilidad", "Link_CV"]];
+    }
+
     const ws = XLSX.utils.aoa_to_sheet(encabezados);
     const wb = XLSX.utils.book_new();
     XLSX.utils.book_append_sheet(wb, ws, "Datos");
-    XLSX.writeFile(wb, "Formato_Directorio.xlsx");
+    XLSX.writeFile(wb, `Plantilla_${tipo}.xlsx`);
 }
 
 function manejarSubidaExcel(evento) {
@@ -158,29 +186,45 @@ function manejarSubidaExcel(evento) {
         const workbook = XLSX.read(data, {type: 'array'});
         const datosJSON = XLSX.utils.sheet_to_json(workbook.Sheets[workbook.SheetNames[0]]);
         
-        // Mapeo seguro con sanitización (.trim) y asignación del Tipo y Categoría de la interfaz
-        const datosMapeados = datosJSON.map(fila => ({
-            Tipo: tipoSeleccionado,
-            Categoria: categoriaSeleccionada,
-            Entidad: (fila.Entidad || 'Entidad Desconocida').toString().trim(),
-            Integrante: (fila.Integrante || '-').toString().trim(),
-            Cargo: (fila.Cargo || '-').toString().trim(),
-            Celular: (fila.Celular || '-').toString().trim(),
-            Correo: (fila.Correo || '-').toString().trim(),
-            Observaciones: (fila.Observaciones || '-').toString().trim()
-        }));
+        const datosMapeados = datosJSON.map(fila => {
+            let obj = { id: Date.now() + Math.random(), Tipo: tipoSeleccionado, Categoria: categoriaSeleccionada };
+            
+            if(tipoSeleccionado === 'incubadora') {
+                obj.Organizacion = (fila.Organizacion || '').toString().trim();
+                obj.Celular = (fila.Celular || '').toString().trim();
+                obj.Correo = (fila.Correo || '').toString().trim();
+                obj.RUC = (fila.RUC || '').toString().trim();
+                obj.Tipo_Entidad = (fila.Tipo_Entidad || '').toString().trim();
+                obj.Contacto_Nombres = (fila.Contacto_Nombres || '').toString().trim();
+                obj.Contacto_Cargo = (fila.Contacto_Cargo || '').toString().trim();
+                obj.Servicios = (fila.Servicios || '').toString().trim();
+                obj.Sectores_Interes = (fila.Sectores_Interes || '').toString().trim();
+                obj.Link_Portafolio = (fila.Link_Portafolio || '').toString().trim();
+            } else {
+                obj.Nombres = (fila.Nombres || '').toString().trim();
+                obj.Apellidos = (fila.Apellidos || '').toString().trim();
+                obj.Celular = (fila.Celular || '').toString().trim();
+                obj.Correo = (fila.Correo || '').toString().trim();
+                obj.Sectores_Priorizados = (fila.Sectores_Priorizados || '').toString().trim();
+                obj.Fondos_Experiencia = (fila.Fondos_Experiencia || '').toString().trim();
+                obj.Interes_Principal = (fila.Interes_Principal || '').toString().trim();
+                obj.Disponibilidad = (fila.Disponibilidad || '').toString().trim();
+                obj.Link_CV = (fila.Link_CV || '').toString().trim();
+            }
+            return obj;
+        });
         
         appData.directorio = [...appData.directorio, ...datosMapeados];
         guardarDatosServidor();
         document.getElementById('excel-input').value = ''; 
-        alert(`Excel cargado correctamente como ${tipoSeleccionado} en ${categoriaSeleccionada}`);
+        alert(`Excel cargado correctamente como ${tipoSeleccionado}`);
     };
     reader.readAsArrayBuffer(archivo);
 }
 
-function eliminarEntidad(nombreEntidad) {
-    if(confirm(`¿Seguro que deseas eliminar la entidad "${nombreEntidad}" y todos sus miembros?`)) {
-        appData.directorio = appData.directorio.filter(d => d.Entidad !== nombreEntidad);
+function eliminarRegistroDirectorio(id) {
+    if(confirm(`¿Seguro que deseas eliminar este registro?`)) {
+        appData.directorio = appData.directorio.filter(d => d.id !== id);
         guardarDatosServidor();
     }
 }
@@ -189,21 +233,18 @@ function renderizarEntidadesAdmin() {
     const lista = document.getElementById('lista-admin-entidades');
     if(!lista) return;
 
-    const entidades = [...new Set(appData.directorio.map(item => item.Entidad))];
     lista.innerHTML = ''; 
     
-    entidades.forEach(ent => {
-        // Obtenemos los detalles de la primera persona de esa entidad para mostrar la info en el panel
-        const info = appData.directorio.find(d => d.Entidad === ent);
+    appData.directorio.forEach(item => {
         const li = document.createElement('li');
+        let tituloPrincipal = item.Tipo === 'incubadora' ? item.Organizacion : `${item.Nombres} ${item.Apellidos}`;
         
-        // Mostramos el nombre, si es Incubadora/Formulador, y en qué página está
-        li.innerHTML = `<span><strong>${ent}</strong> <br><small style="color:#555;">(${info.Tipo} - ${info.Categoria})</small></span>`;
+        li.innerHTML = `<span><strong>${tituloPrincipal}</strong> <br><small style="color:#555;">(${item.Tipo} - ${item.Categoria})</small></span>`;
         
         const btnEliminar = document.createElement('button');
         btnEliminar.className = 'btn-danger';
         btnEliminar.innerHTML = '<i class="fa-solid fa-trash"></i>';
-        btnEliminar.onclick = () => eliminarEntidad(ent);
+        btnEliminar.onclick = () => eliminarRegistroDirectorio(item.id);
         
         li.appendChild(btnEliminar);
         lista.appendChild(li);
@@ -213,43 +254,94 @@ function renderizarEntidadesAdmin() {
 function abrirDirectorio(tipo, categoria) {
     document.getElementById('titulo-directorio').innerText = tipo === 'incubadora' ? 'Incubadoras y Otras Entidades' : 'Formuladores';
     
-    // FILTRO DOBLE: Comprobamos el tipo y la página (categoría) a la que pertenece
     const data = appData.directorio.filter(d => d.Tipo === tipo && d.Categoria === categoria);
-    
     const contenedor = document.getElementById('contenedor-entidades');
-    contenedor.innerHTML = data.length === 0 ? '<p>No hay registros en esta sección para esta página.</p>' : '';
+    contenedor.innerHTML = '';
 
-    const agrupado = data.reduce((acc, curr) => {
-        if(!acc[curr.Entidad]) acc[curr.Entidad] = [];
-        acc[curr.Entidad].push(curr);
-        return acc;
-    }, {});
+    if(data.length === 0) {
+        contenedor.innerHTML = '<p>No hay registros en esta sección para esta página.</p>';
+        abrirModal('modal-directorio');
+        return;
+    }
 
-    for (const [entidad, integrantes] of Object.entries(agrupado)) {
-        let filas = integrantes.map(i => `<tr>
-            <td data-label="Integrante">${i.Integrante||'-'}</td>
-            <td data-label="Cargo">${i.Cargo||'-'}</td>
-            <td data-label="Celular">${i.Celular||'-'}</td>
-            <td data-label="Correo">${i.Correo||'-'}</td>
-            <td data-label="Observaciones">${i.Observaciones||'-'}</td>
-        </tr>`).join('');
-        
-        contenedor.innerHTML += `
+    if(tipo === 'incubadora') {
+        // Vista para Incubadoras (Fichas por organización)
+        let htmlFichas = data.map(i => {
+            let linkPortafolio = i.Link_Portafolio ? `<a href="${i.Link_Portafolio.startsWith('http') ? i.Link_Portafolio : 'https://'+i.Link_Portafolio}" target="_blank">Ver Portafolio</a>` : '-';
+            return `
             <div class="entidad-group">
-                <div class="entidad-header"><i class="fa-solid fa-building"></i> ${entidad}</div>
+                <div class="entidad-header"><i class="fa-solid fa-building"></i> ${i.Organizacion || '-'}</div>
                 <div class="table-responsive">
                     <table>
-                        <thead><tr><th>Integrante</th><th>Cargo</th><th>Celular</th><th>Correo</th><th>Observaciones</th></tr></thead>
-                        <tbody>${filas}</tbody>
+                        <tbody>
+                            <tr>
+                                <th>RUC</th><td data-label="RUC">${i.RUC || '-'}</td>
+                                <th>Tipo Entidad</th><td data-label="Tipo Entidad">${i.Tipo_Entidad || '-'}</td>
+                            </tr>
+                            <tr>
+                                <th>Contacto</th><td data-label="Contacto">${i.Contacto_Nombres || '-'}</td>
+                                <th>Cargo</th><td data-label="Cargo">${i.Contacto_Cargo || '-'}</td>
+                            </tr>
+                            <tr>
+                                <th>Celular</th><td data-label="Celular">${i.Celular || '-'}</td>
+                                <th>Correo</th><td data-label="Correo">${i.Correo || '-'}</td>
+                            </tr>
+                            <tr>
+                                <th>Servicios</th><td colspan="3" data-label="Servicios">${i.Servicios || '-'}</td>
+                            </tr>
+                            <tr>
+                                <th>Sectores Interés</th><td colspan="3" data-label="Sectores">${i.Sectores_Interes || '-'}</td>
+                            </tr>
+                            <tr>
+                                <th>Portafolio</th><td colspan="3" data-label="Portafolio">${linkPortafolio}</td>
+                            </tr>
+                        </tbody>
                     </table>
                 </div>
             </div>`;
+        }).join('');
+        contenedor.innerHTML = htmlFichas;
+
+    } else {
+        // Vista para Formuladores (Tabla Plana)
+        let filas = data.map(i => {
+            let linkCV = i.Link_CV ? `<a href="${i.Link_CV.startsWith('http') ? i.Link_CV : 'https://'+i.Link_CV}" target="_blank">Ver CV</a>` : '-';
+            return `
+            <tr>
+                <td data-label="Nombre">${i.Nombres} ${i.Apellidos}</td>
+                <td data-label="Contacto">${i.Celular}<br>${i.Correo}</td>
+                <td data-label="Sectores">${i.Sectores_Priorizados || '-'}</td>
+                <td data-label="Fondos">${i.Fondos_Experiencia || '-'}</td>
+                <td data-label="Interés">${i.Interes_Principal || '-'}</td>
+                <td data-label="Disponibilidad">${i.Disponibilidad || '-'}</td>
+                <td data-label="CV">${linkCV}</td>
+            </tr>`;
+        }).join('');
+        
+        contenedor.innerHTML = `
+            <div class="table-responsive">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Nombre Completo</th>
+                            <th>Contacto</th>
+                            <th>Sectores Priorizados</th>
+                            <th>Fondos de Experiencia</th>
+                            <th>Interés Principal</th>
+                            <th>Disponibilidad</th>
+                            <th>CV</th>
+                        </tr>
+                    </thead>
+                    <tbody>${filas}</tbody>
+                </table>
+            </div>`;
     }
+    
     abrirModal('modal-directorio');
 }
 
 // ==========================================
-// 4. GESTIÓN DEL CALENDARIO Y EVENTOS
+// 4. CALENDARIO Y EVENTOS
 // ==========================================
 function cambiarMes(offset) {
     fechaActual.setMonth(fechaActual.getMonth() + offset);
@@ -261,7 +353,7 @@ function renderizarCalendario() {
     const displayMes = document.getElementById('mes-anio-display');
     const boxDetalles = document.getElementById('evento-detalles-box');
     
-    if(!grid || !displayMes) return; // Por si estamos en una página sin calendario
+    if(!grid || !displayMes) return; 
 
     const mes = fechaActual.getMonth();
     const anio = fechaActual.getFullYear();
@@ -298,10 +390,9 @@ function mostrarDetalleEvento(eventosDelDia) {
 
     eventosDelDia.forEach(evento => {
         let ubicacionHTML = `<span><i class="fa-solid fa-location-dot"></i> ${evento.ubicacion}</span>`;
-        
         if(evento.ubicacion.includes('http') || evento.ubicacion.includes('meet') || evento.ubicacion.includes('zoom')) {
             let urlSegura = evento.ubicacion.startsWith('http') ? evento.ubicacion : 'https://' + evento.ubicacion;
-            ubicacionHTML = `<a href="${urlSegura}" target="_blank" rel="noopener noreferrer" class="btn-meet-link"><i class="fa-solid fa-video"></i> Ir a la Reunión / Ubicación</a>`;
+            ubicacionHTML = `<a href="${urlSegura}" target="_blank" rel="noopener noreferrer" class="btn-meet-link"><i class="fa-solid fa-video"></i> Ir a la Reunión</a>`;
         }
 
         let adminHTML = isAdmin ? `
@@ -334,9 +425,7 @@ function guardarEvento() {
 
     if (id) {
         const index = appData.eventos.findIndex(e => e.id == id);
-        if(index > -1) {
-            appData.eventos[index] = { id: parseInt(id), fecha, hora, titulo, ubicacion };
-        }
+        if(index > -1) appData.eventos[index] = { id: parseInt(id), fecha, hora, titulo, ubicacion };
         document.getElementById('btn-guardar-evento').innerText = "Guardar Evento";
         document.getElementById('btn-cancelar-edicion').classList.add('hidden');
     } else {
@@ -345,7 +434,6 @@ function guardarEvento() {
 
     guardarDatosServidor();
     document.querySelectorAll('#evento-edit-id, #evento-fecha, #evento-hora, #evento-titulo, #evento-ubicacion').forEach(el => el.value = '');
-    alert("Evento procesado correctamente");
 }
 
 function prepararEdicionEvento(id) {
@@ -356,7 +444,6 @@ function prepararEdicionEvento(id) {
         document.getElementById('evento-hora').value = evento.hora;
         document.getElementById('evento-titulo').value = evento.titulo;
         document.getElementById('evento-ubicacion').value = evento.ubicacion;
-        
         document.getElementById('btn-guardar-evento').innerText = "Actualizar Evento";
         document.getElementById('btn-cancelar-edicion').classList.remove('hidden');
         cerrarModal('modal-calendario');
@@ -420,7 +507,6 @@ function renderizarAnexos() {
     }
 
     appData.anexos.forEach(a => {
-        // Render en Panel de Administrador
         if(listaAdmin) {
             listaAdmin.innerHTML += `
                 <li>
@@ -436,7 +522,6 @@ function renderizarAnexos() {
                 </li>`;
         }
             
-        // Render en Vista Pública
         if(a.visible && listaPublica) {
             listaPublica.innerHTML += `
                 <li>

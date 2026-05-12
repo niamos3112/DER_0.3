@@ -91,16 +91,37 @@
                 </div>
                 
                 <div class="admin-sub-section">
-                    <input type="text" id="dir-entidad" placeholder="Entidad" class="admin-input">
-                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 5px;">
-                        <input type="text" id="dir-nombre" placeholder="Nombre" class="admin-input">
-                        <input type="text" id="dir-cargo" placeholder="Cargo" class="admin-input">
-                        <input type="text" id="dir-cel" placeholder="Celular" class="admin-input">
-                        <input type="text" id="dir-correo" placeholder="Correo" class="admin-input">
-                    </div>
-                    <input type="text" id="dir-obs" placeholder="Observaciones" class="admin-input" style="margin-top:5px;">
-                    <button onclick="agregarDirectorioManual()" class="btn-primary">Añadir Integrante</button>
-                </div>
+    <div id="form-incubadora">
+        <input type="text" id="inc-org" placeholder="Nombre de la Organización/Institución" class="admin-input">
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 5px;">
+            <input type="text" id="inc-ruc" placeholder="RUC" class="admin-input">
+            <input type="text" id="inc-tipo" placeholder="Tipo de Entidad" class="admin-input">
+            <input type="text" id="inc-cel" placeholder="Número de Celular" class="admin-input">
+            <input type="email" id="inc-correo" placeholder="Correo Electrónico Institucional" class="admin-input">
+            <input type="text" id="inc-nombres" placeholder="Nombres y Apellidos (Contacto)" class="admin-input">
+            <input type="text" id="inc-cargo" placeholder="Cargo en la Institución" class="admin-input">
+            <input type="text" id="inc-servicios" placeholder="Servicios que brindan" class="admin-input">
+            <input type="text" id="inc-sectores" placeholder="Sectores de mayor interés o experiencia" class="admin-input">
+        </div>
+        <input type="url" id="inc-portafolio" placeholder="Link del Portafolio" class="admin-input" style="margin-top:5px;">
+    </div>
+
+    <div id="form-formulador" class="hidden">
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 5px;">
+            <input type="text" id="form-nombres" placeholder="Nombres completos" class="admin-input">
+            <input type="text" id="form-apellidos" placeholder="Apellidos completos" class="admin-input">
+            <input type="text" id="form-cel" placeholder="Número de Celular" class="admin-input">
+            <input type="email" id="form-correo" placeholder="Correo Electrónico" class="admin-input">
+            <input type="text" id="form-sectores" placeholder="Sectores Priorizados" class="admin-input">
+            <input type="text" id="form-fondos" placeholder="Fondos de Experiencia" class="admin-input">
+            <input type="text" id="form-interes" placeholder="Interés Principal" class="admin-input">
+            <input type="text" id="form-disp" placeholder="Disponibilidad" class="admin-input">
+        </div>
+        <input type="url" id="form-cv" placeholder="Link CV" class="admin-input" style="margin-top:5px;">
+    </div>
+
+    <button onclick="agregarDirectorioManual()" class="btn-primary" style="margin-top: 15px;">Añadir Registro</button>
+</div>
 
                 <div class="admin-sub-section" style="margin-top: 15px;">
                     <h5>O Carga Masiva (Excel)</h5>
