@@ -1,5 +1,5 @@
 // ==========================================
-// CONFIGURACIÓN GLOBAL
+// CONFIGURACIÓN GLOBAL (PRODUCCIÓN EN FLASK)
 // ==========================================
 const API_URL = '/api/data';
 
@@ -21,14 +21,23 @@ async function cargarDatosServidor() {
         const respuesta = await fetch(API_URL);
         if (respuesta.ok) {
             appData = await respuesta.json();
-            document.getElementById('loading-banner').style.opacity = '0';
-            setTimeout(() => document.getElementById('loading-banner').style.display = 'none', 500);
+            
+            // Ocultar banner de carga
+            const banner = document.getElementById('loading-banner');
+            if(banner) {
+                banner.style.opacity = '0';
+                setTimeout(() => banner.style.display = 'none', 500);
+            }
+            
             renderizarTodo();
         }
     } catch (error) {
         console.error("Error conectando al servidor Python:", error);
-        document.getElementById('loading-banner').innerText = "Error de conexión. Asegúrate de ejecutar app.py";
-        document.getElementById('loading-banner').style.background = "#e31837";
+        const banner = document.getElementById('loading-banner');
+        if(banner) {
+            banner.innerText = "Error de conexión. Asegúrate de que el servidor esté activo.";
+            banner.style.background = "#e31837";
+        }
     }
 }
 
@@ -46,11 +55,13 @@ async function guardarDatosServidor() {
 }
 
 function renderizarTodo() {
-    // Renderizar enlace de postulación
-    document.getElementById('btn-postula-publico').href = appData.linkPostulacion;
-    document.getElementById('admin-link-postula').value = appData.linkPostulacion;
+    // Renderizar enlace de postulación (solo si existe el botón en la página actual)
+    const btnPostula = document.getElementById('btn-postula-publico');
+    const inputLink = document.getElementById('admin-link-postula');
     
-    // Renderizar resto de componentes
+    if (btnPostula) btnPostula.href = appData.linkPostulacion;
+    if (inputLink) inputLink.value = appData.linkPostulacion;
+    
     renderizarEntidadesAdmin();
     renderizarCalendario();
     renderizarAnexos();
@@ -62,11 +73,13 @@ document.addEventListener('DOMContentLoaded', cargarDatosServidor);
 // 2. CONTROL DE ACCESO (ADMINISTRADOR)
 // ==========================================
 function abrirModal(id) { 
-    document.getElementById(id).classList.remove('hidden'); 
+    const modal = document.getElementById(id);
+    if(modal) modal.classList.remove('hidden'); 
 }
 
 function cerrarModal(id) { 
-    document.getElementById(id).classList.add('hidden'); 
+    const modal = document.getElementById(id);
+    if(modal) modal.classList.add('hidden'); 
 }
 
 function verificarAcceso() {
@@ -75,7 +88,7 @@ function verificarAcceso() {
         document.getElementById('admin-panel').classList.remove('hidden');
         document.getElementById('admin-pass').value = '';
         isAdmin = true;
-        renderizarCalendario(); // Re-renderizar para mostrar botones de edición
+        renderizarCalendario(); // Mostrar botones de edición
     } else { 
         alert("Contraseña incorrecta"); 
     }
@@ -96,10 +109,11 @@ function actualizarLinkPostulacion() {
 }
 
 // ==========================================
-// 3. GESTIÓN DE DIRECTORIOS
+// 3. GESTIÓN DE DIRECTORIOS (CON CATEGORÍAS)
 // ==========================================
 function agregarDirectorioManual() {
     const tipo = document.getElementById('dir-tipo').value;
+    const categoria = document.getElementById('dir-categoria').value;
     const entidad = document.getElementById('dir-entidad').value;
     const nombre = document.getElementById('dir-nombre').value;
     
@@ -107,6 +121,7 @@ function agregarDirectorioManual() {
 
     appData.directorio.push({
         Tipo: tipo, 
+        Categoria: categoria, // Guardamos la página a la que pertenece
         Entidad: entidad.trim(), 
         Integrante: nombre.trim(),
         Cargo: document.getElementById('dir-cargo').value.trim(),
@@ -116,11 +131,14 @@ function agregarDirectorioManual() {
     });
 
     guardarDatosServidor();
+    
+    // Limpiar campos de texto del panel
     document.querySelectorAll('.admin-sub-section input[type="text"]').forEach(el => el.value = '');
-    alert("Integrante añadido correctamente");
+    alert(`Integrante añadido correctamente a la sección: ${categoria}`);
 }
 
 function descargarPlantilla() {
+    // La plantilla Excel es simple. La categoría y el tipo se eligen en la página web antes de subir.
     const encabezados = [["Entidad", "Integrante", "Cargo", "Celular", "Correo", "Observaciones"]];
     const ws = XLSX.utils.aoa_to_sheet(encabezados);
     const wb = XLSX.utils.book_new();
@@ -131,6 +149,7 @@ function descargarPlantilla() {
 function manejarSubidaExcel(evento) {
     const archivo = evento.target.files[0];
     const tipoSeleccionado = document.getElementById('dir-tipo').value;
+    const categoriaSeleccionada = document.getElementById('dir-categoria').value;
     if (!archivo) return;
 
     const reader = new FileReader();
@@ -139,9 +158,10 @@ function manejarSubidaExcel(evento) {
         const workbook = XLSX.read(data, {type: 'array'});
         const datosJSON = XLSX.utils.sheet_to_json(workbook.Sheets[workbook.SheetNames[0]]);
         
-        // Mapeo seguro con sanitización (.trim) para evitar errores de espacios
+        // Mapeo seguro con sanitización (.trim) y asignación del Tipo y Categoría de la interfaz
         const datosMapeados = datosJSON.map(fila => ({
             Tipo: tipoSeleccionado,
+            Categoria: categoriaSeleccionada,
             Entidad: (fila.Entidad || 'Entidad Desconocida').toString().trim(),
             Integrante: (fila.Integrante || '-').toString().trim(),
             Cargo: (fila.Cargo || '-').toString().trim(),
@@ -153,7 +173,7 @@ function manejarSubidaExcel(evento) {
         appData.directorio = [...appData.directorio, ...datosMapeados];
         guardarDatosServidor();
         document.getElementById('excel-input').value = ''; 
-        alert("Excel cargado correctamente en el servidor");
+        alert(`Excel cargado correctamente como ${tipoSeleccionado} en ${categoriaSeleccionada}`);
     };
     reader.readAsArrayBuffer(archivo);
 }
@@ -166,14 +186,19 @@ function eliminarEntidad(nombreEntidad) {
 }
 
 function renderizarEntidadesAdmin() {
-    const entidades = [...new Set(appData.directorio.map(item => item.Entidad))];
     const lista = document.getElementById('lista-admin-entidades');
+    if(!lista) return;
+
+    const entidades = [...new Set(appData.directorio.map(item => item.Entidad))];
     lista.innerHTML = ''; 
     
     entidades.forEach(ent => {
-        const tipoInfo = appData.directorio.find(d => d.Entidad === ent).Tipo;
+        // Obtenemos los detalles de la primera persona de esa entidad para mostrar la info en el panel
+        const info = appData.directorio.find(d => d.Entidad === ent);
         const li = document.createElement('li');
-        li.innerHTML = `<span><strong>${ent}</strong> <small>(${tipoInfo})</small></span>`;
+        
+        // Mostramos el nombre, si es Incubadora/Formulador, y en qué página está
+        li.innerHTML = `<span><strong>${ent}</strong> <br><small style="color:#555;">(${info.Tipo} - ${info.Categoria})</small></span>`;
         
         const btnEliminar = document.createElement('button');
         btnEliminar.className = 'btn-danger';
@@ -185,11 +210,14 @@ function renderizarEntidadesAdmin() {
     });
 }
 
-function abrirDirectorio(tipo) {
+function abrirDirectorio(tipo, categoria) {
     document.getElementById('titulo-directorio').innerText = tipo === 'incubadora' ? 'Incubadoras y Otras Entidades' : 'Formuladores';
-    const data = appData.directorio.filter(d => d.Tipo === tipo);
+    
+    // FILTRO DOBLE: Comprobamos el tipo y la página (categoría) a la que pertenece
+    const data = appData.directorio.filter(d => d.Tipo === tipo && d.Categoria === categoria);
+    
     const contenedor = document.getElementById('contenedor-entidades');
-    contenedor.innerHTML = data.length === 0 ? '<p>No hay registros en esta categoría.</p>' : '';
+    contenedor.innerHTML = data.length === 0 ? '<p>No hay registros en esta sección para esta página.</p>' : '';
 
     const agrupado = data.reduce((acc, curr) => {
         if(!acc[curr.Entidad]) acc[curr.Entidad] = [];
@@ -229,14 +257,20 @@ function cambiarMes(offset) {
 }
 
 function renderizarCalendario() {
+    const grid = document.getElementById('calendar-body');
+    const displayMes = document.getElementById('mes-anio-display');
+    const boxDetalles = document.getElementById('evento-detalles-box');
+    
+    if(!grid || !displayMes) return; // Por si estamos en una página sin calendario
+
     const mes = fechaActual.getMonth();
     const anio = fechaActual.getFullYear();
     const meses = ["Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"];
-    document.getElementById('mes-anio-display').innerText = `${meses[mes]} ${anio}`;
     
-    const grid = document.getElementById('calendar-body');
+    displayMes.innerText = `${meses[mes]} ${anio}`;
     grid.innerHTML = '';
-    document.getElementById('evento-detalles-box').classList.add('hidden');
+    
+    if(boxDetalles) boxDetalles.classList.add('hidden');
     
     const diasEnMes = new Date(anio, mes + 1, 0).getDate();
 
@@ -258,6 +292,8 @@ function renderizarCalendario() {
 
 function mostrarDetalleEvento(eventosDelDia) {
     const box = document.getElementById('evento-detalles-box');
+    if(!box) return;
+
     box.innerHTML = '';
 
     eventosDelDia.forEach(evento => {
@@ -375,30 +411,33 @@ function eliminarAnexo(id) {
 function renderizarAnexos() {
     const listaAdmin = document.getElementById('lista-anexos-admin');
     const listaPublica = document.getElementById('lista-anexos-publico');
-    listaAdmin.innerHTML = ''; 
-    listaPublica.innerHTML = '';
     
-    if (appData.anexos.length === 0) {
+    if(listaAdmin) listaAdmin.innerHTML = ''; 
+    if(listaPublica) listaPublica.innerHTML = '';
+    
+    if (appData.anexos.length === 0 && listaPublica) {
         listaPublica.innerHTML = '<li>No hay anexos disponibles en este momento.</li>';
     }
 
     appData.anexos.forEach(a => {
         // Render en Panel de Administrador
-        listaAdmin.innerHTML += `
-            <li>
-                <span>${a.nombre}</span> 
-                <div>
-                    <button onclick="alternarVisibilidad(${a.id})" style="background:${a.visible?'green':'gray'}; color:white; padding:5px; width:auto; margin-right:5px;">
-                        ${a.visible ? 'Visible' : 'Oculto'}
-                    </button>
-                    <button onclick="eliminarAnexo(${a.id})" class="btn-danger" style="padding:5px; width:auto;">
-                        <i class="fa-solid fa-trash"></i>
-                    </button>
-                </div>
-            </li>`;
+        if(listaAdmin) {
+            listaAdmin.innerHTML += `
+                <li>
+                    <span>${a.nombre}</span> 
+                    <div>
+                        <button onclick="alternarVisibilidad(${a.id})" style="background:${a.visible?'green':'gray'}; color:white; padding:5px; width:auto; margin-right:5px;">
+                            ${a.visible ? 'Visible' : 'Oculto'}
+                        </button>
+                        <button onclick="eliminarAnexo(${a.id})" class="btn-danger" style="padding:5px; width:auto;">
+                            <i class="fa-solid fa-trash"></i>
+                        </button>
+                    </div>
+                </li>`;
+        }
             
         // Render en Vista Pública
-        if(a.visible) {
+        if(a.visible && listaPublica) {
             listaPublica.innerHTML += `
                 <li>
                     <a href="${a.url}" target="_blank" rel="noopener noreferrer">

@@ -935,3 +935,55 @@ body {
         padding: 20px 20px 40px;
     }
 }
+
+/* Nuevos estilos para la página "Innovación Empresarial" */
+
+.red-badge {
+    background-color: #e31837;
+    color: #fff;
+    padding: 8px 18px;
+    border-radius: 8px;
+    font-weight: 800;
+    font-style: italic;
+    font-size: 1.1rem;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.2);
+    display: inline-block;
+}
+
+.card-green { 
+    background-color: #2bcf8d; /* Verde menta del mockup */
+}
+
+.btn-back {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    text-decoration: none;
+    color: #333;
+    font-weight: 800;
+    font-size: 0.9rem;
+    margin-bottom: 20px;
+    transition: color 0.3s, transform 0.2s;
+}
+
+.btn-back i {
+    background: #f4f4f4;
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 0.8rem;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+}
+
+.btn-back:hover {
+    color: #e31837;
+    transform: translateX(-5px);
+}
+
+.btn-back:hover i {
+    background: #e31837;
+    color: #fff;
+}

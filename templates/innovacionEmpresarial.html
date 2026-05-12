@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Emprendimientos Innovadores - Hub Cusco</title>
+    <title>Innovación Empresarial - Hub Cusco</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="/static/style.css">
 </head>
@@ -12,6 +12,10 @@
 
     <div class="container" id="main-card">
         
+        <a href="/" class="btn-back">
+            <i class="fa-solid fa-arrow-left"></i> Volver al Inicio
+        </a>
+
         <header class="top-header">
             <a href="/">
                 <img src="/static/img/MP.PNG" alt="Ministerio de la Producción">
@@ -19,23 +23,19 @@
             <h2 class="hub-title" ondblclick="abrirModal('admin-login')" title="Doble clic para administrar">HUB DE INNOVACIÓN CUSCO 2026</h2>
             <img src="/static/img/innova.PNG" alt="Pro Innóvate">
         </header>
-        
-        <a href="/" class="btn-back">
-            <i class="fa-solid fa-arrow-left"></i> Volver al Inicio
-        </a>
-        
+
         <div class="badge-wrapper">
-            <span class="black-badge">Emprendimientos Innovadores</span>
+            <span class="red-badge">Innovación Empresarial</span>
         </div>
 
         <main class="dashboard-grid">
-            <div onclick="abrirDirectorio('incubadora', 'emprendedores')" class="info-card card-red">
+            <div onclick="abrirDirectorio('incubadora', 'empresarial')" class="info-card card-red">
                 <h3 class="card-title">DIRECTORIO</h3>
                 <div class="white-box"><span class="box-text">INCUBADORAS Y<br>OTRAS ENTIDADES</span></div>
                 <i class="fa-solid fa-circle-plus plus-icon"></i>
             </div>
 
-            <div onclick="abrirDirectorio('formulador', 'emprendedores')" class="info-card card-teal">
+            <div onclick="abrirDirectorio('formulador', 'empresarial')" class="info-card card-green">
                 <h3 class="card-title">DIRECTORIO</h3>
                 <div class="white-box"><span class="box-text">FORMULADORES</span></div>
                 <i class="fa-solid fa-circle-plus plus-icon"></i>
@@ -85,8 +85,8 @@
                         <option value="formulador">Formuladores</option>
                     </select>
                     <select id="dir-categoria" class="admin-input">
-                        <option value="emprendedores" selected>Emprendimientos Innovadores</option>
-                        <option value="empresarial">Innovación Empresarial</option>
+                        <option value="emprendedores">Emprendimientos Innovadores</option>
+                        <option value="empresarial" selected>Innovación Empresarial</option>
                     </select>
                 </div>
                 
